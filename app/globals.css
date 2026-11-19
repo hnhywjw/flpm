@@ -1,0 +1,315 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ---------------- 品牌字体（自托管） ----------------
+   为什么要自托管：
+     Montserrat / Inter 都不是系统字体，用户电脑上大概率没装。
+     只写 font-family:'Montserrat' 会**静默回退**到 Segoe UI / 微软雅黑，
+     等于白写 —— 这一点我在预览阶段踩过，五套方案看起来一模一样。
+
+   体积：每字重约 19KB（仅 latin 子集），8 个共约 172KB。
+   只引 latin：中文交给系统字体（微软雅黑 / 苹方），
+   中文字体动辄 5-10MB，为几个词全量打包不值得。
+*/
+@font-face{font-family:'Montserrat';font-style:normal;font-weight:500;font-display:swap;src:url('/fonts/montserrat-latin-500-normal.woff2') format('woff2')}
+@font-face{font-family:'Montserrat';font-style:normal;font-weight:600;font-display:swap;src:url('/fonts/montserrat-latin-600-normal.woff2') format('woff2')}
+@font-face{font-family:'Montserrat';font-style:normal;font-weight:700;font-display:swap;src:url('/fonts/montserrat-latin-700-normal.woff2') format('woff2')}
+@font-face{font-family:'Montserrat';font-style:normal;font-weight:800;font-display:swap;src:url('/fonts/montserrat-latin-800-normal.woff2') format('woff2')}
+@font-face{font-family:'Inter';font-style:normal;font-weight:500;font-display:swap;src:url('/fonts/inter-latin-500-normal.woff2') format('woff2')}
+@font-face{font-family:'Inter';font-style:normal;font-weight:600;font-display:swap;src:url('/fonts/inter-latin-600-normal.woff2') format('woff2')}
+@font-face{font-family:'Inter';font-style:normal;font-weight:700;font-display:swap;src:url('/fonts/inter-latin-700-normal.woff2') format('woff2')}
+@font-face{font-family:'Inter';font-style:normal;font-weight:800;font-display:swap;src:url('/fonts/inter-latin-800-normal.woff2') format('woff2')}
+
+:root{
+  --bg:#f4f6fa; --card:#fff; --line:#e6eaf2; --line2:#f0f3f9;
+  --text:#1c2434; --sub:#6b7690; --muted:#98a1b3;
+  --pri:#2557d6; --pri-2:#1d47b5; --pri-weak:#eaf0ff; --pri-soft:#c9d8ff;
+  --brand1:#3b74ff; --brand2:#1d47b5;
+  --ok:#0f9d58; --ok-weak:#e7f6ee;
+  --warn:#d98200; --warn-weak:#fff5e3;
+  --bad:#d93838; --bad-weak:#fdecec;
+  --info:#0b7f96; --info-weak:#e6f5f8;
+  --violet:#7b5cf0; --violet-weak:#f0ecfe;
+  --side-bg:#101a30; --side-title:#fff; --side-text:#b6c1d6;
+  --side-dim:#7c8aa6; --side-hover:#1a2745; --side-line:#1c2740;
+}
+[data-theme="teal"]{--bg:#f2f7f8;--line:#dfeaec;--line2:#eef4f5;--pri:#0e7c86;--pri-2:#0a646d;--pri-weak:#e4f4f5;--pri-soft:#bfe4e7;--brand1:#14a3b0;--brand2:#0a646d;--side-bg:#0c1f24;--side-hover:#143038;--side-line:#15313a;--info:#12657a;--info-weak:#e3f0f4}
+[data-theme="green"]{--bg:#f3f7f4;--line:#e1ebe4;--line2:#eff5f1;--pri:#0f7a5a;--pri-2:#0b6249;--pri-weak:#e6f5ef;--pri-soft:#bfe6d6;--brand1:#17a276;--brand2:#0b6249;--side-bg:#0f211c;--side-hover:#17352c;--side-line:#1a3a30}
+[data-theme="violet"]{--bg:#f6f4fc;--line:#e8e3f6;--line2:#f3f0fb;--pri:#5b3fd6;--pri-2:#4a31b8;--pri-weak:#f0ecfe;--pri-soft:#d6ccfb;--brand1:#7f63f0;--brand2:#4a31b8;--side-bg:#191233;--side-hover:#241a44;--side-line:#2a2050}
+[data-theme="red"]{--bg:#faf5f5;--line:#f0e2e2;--line2:#f8eeee;--pri:#b8282a;--pri-2:#972022;--pri-weak:#fdeceb;--pri-soft:#f6c9c8;--brand1:#d94a4c;--brand2:#972022;--side-bg:#241314;--side-hover:#331b1c;--side-line:#3a2021}
+[data-theme="gray"]{--bg:#f5f6f8;--line:#e5e7ec;--line2:#f0f1f4;--pri:#3d4759;--pri-2:#2b3444;--pri-weak:#eef0f4;--pri-soft:#d5dae3;--brand1:#5a6579;--brand2:#2b3444;--side-bg:#1b2029;--side-hover:#252b36;--side-line:#2b3240;--info:#4a6b8a;--info-weak:#eaf0f6}
+[data-side="light"]{--side-bg:#fff;--side-title:#1c2434;--side-text:#5b6580;--side-dim:#98a1b3;--side-hover:#f2f5fb;--side-line:#e6eaf2}
+
+html,body{height:100%}
+body{
+  background:var(--bg); color:var(--text);
+  font:14px/1.55 -apple-system,BlinkMacSystemFont,"Segoe UI","Microsoft YaHei",sans-serif;
+  -webkit-font-smoothing:antialiased;
+}
+::-webkit-scrollbar{width:8px;height:8px}
+::-webkit-scrollbar-thumb{background:#d5dbe8;border-radius:8px}
+
+.card{background:var(--card);border:1px solid var(--line);border-radius:12px;
+  box-shadow:0 1px 2px rgba(16,24,40,.04),0 6px 18px rgba(16,24,40,.05)}
+.card-h{display:flex;align-items:center;gap:10px;padding:14px 16px;border-bottom:1px solid var(--line2);flex-wrap:wrap}
+.card-h h3{font-size:14.5px;font-weight:700}
+.btn{display:inline-flex;align-items:center;gap:6px;padding:8px 14px;border-radius:9px;
+  font-size:13px;font-weight:600;border:1px solid var(--line);background:var(--card);color:var(--text);transition:.15s}
+.btn:hover{border-color:var(--pri-soft);background:var(--pri-weak)}
+.btn-pri{background:var(--pri);border-color:var(--pri);color:#fff;box-shadow:0 4px 12px rgba(37,87,214,.25)}
+.btn-pri:hover{background:var(--pri-2)}
+.btn-sm{padding:5px 10px;font-size:12px;border-radius:7px}
+.badge{display:inline-flex;align-items:center;gap:4px;padding:2px 8px;border-radius:999px;
+  font-size:11.5px;font-weight:700;white-space:nowrap;line-height:1.6}
+.b-ok{background:var(--ok-weak);color:var(--ok)}
+.b-warn{background:var(--warn-weak);color:var(--warn)}
+.b-bad{background:var(--bad-weak);color:var(--bad)}
+.b-info{background:var(--info-weak);color:var(--info)}
+.b-pri{background:var(--pri-weak);color:var(--pri-2)}
+.b-gray{background:var(--line2);color:var(--sub)}
+.b-vio{background:var(--violet-weak);color:var(--violet)}
+.tbl{width:100%;border-collapse:collapse;font-size:13px;white-space:nowrap}
+.tbl th{text-align:left;font-weight:600;font-size:11.5px;color:var(--muted);
+  background:var(--line2);padding:9px 14px;border-bottom:1px solid var(--line)}
+.tbl td{padding:11px 14px;border-bottom:1px solid var(--line2);vertical-align:middle}
+.tbl tbody tr:hover{background:var(--line2)}
+.tbl tbody tr:last-child td{border-bottom:0}
+.num{font-variant-numeric:tabular-nums;font-weight:600}
+.kpi{background:var(--card);border:1px solid var(--line);border-radius:12px;
+  padding:14px 15px;position:relative;overflow:hidden;
+  box-shadow:0 1px 2px rgba(16,24,40,.04),0 6px 18px rgba(16,24,40,.05)}
+.kpi::after{content:"";position:absolute;left:0;top:0;width:3px;height:100%;background:var(--pri)}
+.kpi.w::after{background:var(--warn)} .kpi.b::after{background:var(--bad)}
+.kpi.o::after{background:var(--ok)} .kpi.v::after{background:var(--violet)}
+.kpi .lb{font-size:12px;color:var(--sub)}
+.kpi .vl{font-size:24px;font-weight:750;letter-spacing:-.5px;margin-top:6px;font-variant-numeric:tabular-nums}
+.kpi .vl small{font-size:12px;font-weight:600;color:var(--muted);margin-left:3px}
+.kpi .ft{font-size:11.5px;color:var(--muted);margin-top:5px}
+.bar{height:6px;background:var(--line2);border-radius:99px;overflow:hidden;min-width:60px}
+.bar i{display:block;height:100%;border-radius:99px;background:var(--pri)}
+.money-in{color:var(--ok);font-weight:700}
+.money-out{color:var(--bad);font-weight:700}
+.calc{background:var(--line2);border-radius:10px;padding:13px 15px;font-size:12.5px;line-height:2;font-variant-numeric:tabular-nums}
+.calc .row{display:flex;justify-content:space-between;gap:10px}
+.notice{display:flex;gap:10px;padding:11px 14px;border-radius:10px;
+  background:var(--warn-weak);color:#8a5208;font-size:12.5px;border:1px solid var(--warn-weak);align-items:flex-start}
+.notice b{display:block;margin-bottom:2px;font-size:13px}
+.notice.pri{background:var(--pri-weak);border-color:var(--pri-weak);color:var(--pri-2)}
+.notice.danger{background:var(--bad-weak);border-color:var(--bad-weak);color:var(--bad)}
+.notice.ok{background:var(--ok-weak);border-color:var(--ok-weak);color:var(--ok)}
+.flow{display:flex;gap:6px;overflow-x:auto;padding:6px 2px 4px}
+.fnode{flex:1 0 86px;min-width:86px;padding:9px 8px;border-radius:10px;
+  border:1px solid var(--line);background:var(--card);text-align:center;position:relative}
+.fnode .st{font-size:10.5px;color:var(--muted);margin-bottom:3px;white-space:nowrap}
+.fnode .nn{font-size:12.5px;font-weight:700;white-space:nowrap}
+.fnode .dd{font-size:10.5px;color:var(--muted);margin-top:3px;white-space:nowrap}
+.fnode.done{background:var(--ok-weak);border-color:var(--ok-weak)}
+.fnode.done .st,.fnode.done .dd{color:var(--ok)}
+.fnode.cur{background:var(--pri);border-color:var(--pri);color:#fff;box-shadow:0 6px 16px rgba(37,87,214,.28)}
+.fnode.cur .st,.fnode.cur .dd{color:rgba(255,255,255,.82)}
+.fnode.late{background:var(--bad-weak);border-color:var(--bad-weak)}
+.fnode.late .st,.fnode.late .dd{color:var(--bad)}
+
+/* ---------------- Logo 深浅色表现 ----------------
+   背景：Logo 深色侧栏上是「白底圆角块」，浅色侧栏上是「透明、原尺寸」。
+   早期用 JS 读 localStorage 再 setState，刷新时会先按深色渲染再跳浅色。
+   改由 [data-side] 纯 CSS 驱动后，首帧即正确（配合 layout 里的内联脚本）。
+*/
+/* 深色侧栏：白底圆角块 + 立体浮起
+ *
+ * 立体感的四层构成（缺一层就会显得平）：
+ *   1. 渐变底      从上到下由纯白到淡蓝，模拟受光面
+ *   2. 外投影      0 12px 28px 大范围柔和阴影，制造悬浮距离
+ *   3. 接触阴影    0 5px 10px 短距离深阴影，模拟物体贴地的实感
+ *   4. 内高光       inset 0 2px 1px #fff 顶部一道亮边，模拟顶光
+ *   5. 内暗影       inset 0 -3px 6px 底部一道暗边，加强厚度
+ *   6. 外发光       0 0 24px 淡蓝光晕，融入侧栏底色
+ */
+.logo-box{
+  display:inline-flex;align-items:center;justify-content:center;
+  background:linear-gradient(160deg,#ffffff 0%,#eef4fd 55%,#dbe7f8 100%);
+  box-shadow:
+    0 12px 28px rgba(37,99,235,.5),
+    0 5px 10px rgba(0,0,0,.35),
+    0 0 0 1px rgba(255,255,255,.22),
+    0 0 24px rgba(96,165,250,.35),
+    inset 0 2px 1px #fff,
+    inset 0 -3px 6px rgba(30,64,175,.15);
+  transition:background .2s, border-radius .2s, box-shadow .2s;
+}
+.logo-box > img{
+  width:82%;height:82%;object-fit:contain;display:block;
+  /* 图标自身也加一点点投影，避免"浮在玻璃上"的割裂感 */
+  filter:drop-shadow(0 1.5px 2px rgba(0,20,50,.25));
+  transition:width .2s, height .2s;
+}
+[data-side="light"] .logo-box{
+  background:transparent;
+  box-shadow:none;
+  border-radius:0 !important;
+}
+[data-side="light"] .logo-box > img{
+  width:100%;height:100%;
+  filter:none;
+}
+
+/* ---------------- 侧栏品牌文字 ----------------
+   同样由 [data-side] 纯 CSS 驱动，避免刷新时深→浅闪烁。
+   深色侧栏 = 亮白 + 蓝光；浅色侧栏 = 蓝紫渐变。
+*/
+/* 深色主题的文字立体感
+ *
+ * 用 6 层 text-shadow 叠出来，从下往上：
+ *   0 -1px 白色高光   ← 顶部反光，像字被顶光照到
+ *   0 1px 深色       ← 第一层厚度
+ *   0 2px 更深       ← 第二层厚度（这两层构成"实体边"）
+ *   0 3px 柔和投影   ← 字与背景的距离
+ *   0 0 18px 蓝色光晕 ← 与侧栏氛围融合
+ *
+ * 为什么不用 -webkit-text-stroke：
+ *   描边会均匀加粗所有方向，中文笔画密的地方会糊成一坨。
+ *   只在垂直方向做偏移，中文小字号下依然干净。
+ */
+.brand-title{
+  color:#f8fafc;
+  text-shadow:
+    0 -1px 0 rgba(255,255,255,.35),
+    0 1px 0 #08203a,
+    0 2px 0 #061729,
+    0 3px 6px rgba(0,0,0,.5),
+    0 0 18px rgba(96,165,250,.38);
+}
+/* 英文品牌名：Montserrat 自托管字体 + 同款立体
+ * 字距 1.8px 是试出来的：Montserrat 本身较宽，
+ * 1.1px 显得挤，2.2px 又会散。
+ */
+.brand-sub-title{
+  font-family:'Montserrat','Segoe UI',sans-serif;
+  color:#bfe3ff;
+  letter-spacing:1.8px !important;
+  text-shadow:
+    0 1px 0 #04101f,
+    0 2px 0 #071a2e,
+    0 3px 5px rgba(0,0,0,.45),
+    0 0 16px rgba(96,165,250,.4);
+}
+.brand-en{
+  font-family:'Montserrat','Segoe UI',sans-serif;
+  color:rgba(191,214,255,.92);
+  opacity:.78;
+}
+
+[data-side="light"] .brand-title{
+  color:transparent;
+  text-shadow:none;
+  background:linear-gradient(135deg,#1e40af 0%,#3b82f6 45%,#1d4ed8 100%);
+  -webkit-background-clip:text;
+  background-clip:text;
+}
+/* 浅色主题：白底上做文字投影会显脏，
+ * 改用「渐变裁切 + 极淡投影」保持质感
+ */
+[data-side="light"] .brand-sub-title{
+  color:transparent;
+  text-shadow:none;
+  background:linear-gradient(135deg,#1e40af 0%,#3b82f6 45%,#1d4ed8 100%);
+  -webkit-background-clip:text;
+  background-clip:text;
+  filter:drop-shadow(0 1px 1px rgba(37,99,235,.22));
+}
+[data-side="light"] .brand-en{
+  color:#64748b;
+  opacity:1;
+}
+
+/* ---------------- 侧栏导航滚动条 ----------------
+   需求：系统管理收起时，侧栏不出现垂直滚动条。
+
+   做法：
+     a) 行距收紧（见 Sidebar.tsx），收起时总高约 865px，
+        1080p / 900p 屏幕都能完整放下。
+     b) 即使屏幕再矮需要滚动，也不画滚动条 —— 用 scrollbar-width:none
+        + ::-webkit-scrollbar{display:none} 彻底隐藏，滚轮/触控板依然可滚。
+
+   注意：这里不能用 scrollbar-width:thin。
+   Chromium 会优先采纳它，覆盖掉下面的 ::-webkit-scrollbar 透明设置，
+   结果就是在侧栏右侧画出一条细线（之前就是这样，看着像"多余的分隔线"）。
+*/
+.side-nav{
+  scrollbar-width: none;      /* Firefox：完全不显示 */
+  -ms-overflow-style: none;   /* 旧 Edge / IE */
+}
+.side-nav::-webkit-scrollbar{
+  width: 0;
+  height: 0;
+  display: none;              /* Chromium / Safari：完全不显示 */
+}
+
+@media (max-height: 820px) {
+  .side-nav { padding: 2px 10px 8px !important; }
+  /* 英文全称在矮屏下没有信息增量，藏起来给菜单腾 20px */
+  .brand-en { display: none !important; }
+}
+
+@media (max-height: 720px) {
+  /* 版本号区在超矮屏折叠为一行 */
+  .side-foot-en { display: none !important; }
+}
+
+/* 禁用态：之前没有定义，导致置灰按钮看起来仍可点 */
+.btn:disabled{
+  opacity:.55;
+  cursor:not-allowed;
+}
+.btn-pri:disabled{
+  background:var(--pri);
+  box-shadow:none;
+}
+
+/* ---------------- 侧栏分割线 ----------------
+
+   全侧栏只用这一种样式：中心微亮 → 两端淡出，无外发光。
+
+   ★ 曾经的问题：
+     品牌区那条用了更强的版本（中心亮度 .65 + 0.45 外发光），
+     分组线用弱版本（.32 无光晕）。
+     本意是"突出品牌区"，实际效果是品牌区那条太扎眼，
+     和其他三条明显不是一套东西 —— 视觉上很突兀。
+
+   现在统一：四条线完全同一规格，靠位置区分层级，不靠亮度。
+   这样侧栏是"一个整体"，而不是"四种不同的线"。
+
+   用 background-image 而不是 border-top：
+     border 只能是纯色，做不出渐变。
+*/
+.side-divider-glow,
+.side-divider-soft{
+  border-top:1px solid transparent;
+  background-image:linear-gradient(90deg,
+    transparent,
+    var(--side-line) 18%,
+    rgba(148,190,232,.34) 50%,
+    var(--side-line) 82%,
+    transparent);
+  background-size:100% 1px;
+  background-repeat:no-repeat;
+  background-position:0 0;
+}
+
+/* 品牌区那条是独立 div，需要自己撑高度和左右留白 */
+.side-divider-glow{
+  height:1px;
+  margin:0 14px;
+}
+
+/* 浅色侧栏：白底上蓝调会显脏，换成极淡的灰蓝 */
+[data-side="light"] .side-divider-glow,
+[data-side="light"] .side-divider-soft{
+  background-image:linear-gradient(90deg,
+    transparent,
+    var(--side-line) 18%,
+    rgba(100,140,200,.24) 50%,
+    var(--side-line) 82%,
+    transparent);
+}

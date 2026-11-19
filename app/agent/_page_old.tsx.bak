@@ -1,0 +1,146 @@
+import Link from "next/link";
+import { listAgentAgreements, getAgentPayments } from "@/lib/queries";
+import { fenToWan } from "@/lib/domain";
+import { Badge, PageHeader, Kpi } from "@/components/ui";
+import { ExportButton } from "@/components/ExportButton";
+import { guardPage } from "@/lib/page-guard";
+
+export const dynamic = "force-dynamic";
+
+export default async function AgentPage() {
+  await guardPage("agent");
+  const agents = listAgentAgreements();
+  const totalCust = agents.reduce((s, a) => s + a.customer_amount_cents, 0);
+  const totalFee = agents.reduce((s, a) => s + a.fee_cents, 0);
+  const totalPaid = agents.reduce((s, a) => s + (a.paid_cents ?? 0), 0);
+  const totalUnpaid = agents.reduce((s, a) => s + (a.unpaid_cents ?? 0), 0);
+  const individual = agents.filter((a) => a.party_type === "individual");
+
+  return (
+    <>
+      <PageHeader
+        title="代中标管理"
+        desc="找公司代投标的项目 · 过单费台账 · 两种结算方式"
+        right={
+          <>
+            <ExportButton type="agents" label="导出过单费台账" />
+            <button className="btn btn-pri">登记代中标</button>
+          </>
+        }
+      />
+
+      <div style={{ display: "grid", gap: 14, gridTemplateColumns: "repeat(auto-fit,minmax(160px,1fr))" }}>
+        <Kpi label="代中标合同额" value={fenToWan(totalCust)} unit="万元" foot={`${agents.length} 个项目`} />
+        <Kpi label="过单费合计" value={fenToWan(totalFee)} unit="万元"
+             foot={`平均 ${totalCust ? (totalFee / totalCust * 100).toFixed(2) : 0}%`} tone="v" />
+        <Kpi label="已付过单费" value={fenToWan(totalPaid)} unit="万元"
+             foot={`结清 ${agents.filter((a) => (a.unpaid_cents ?? 0) === 0).length} 笔`} tone="o" />
+        <Kpi label="未付过单费" value={fenToWan(totalUnpaid)} unit="万元"
+             foot={`${agents.filter((a) => (a.unpaid_cents ?? 0) > 0).length} 笔待付`} tone="b" />
+      </div>
+
+      <div className="notice pri" style={{ marginTop: 14 }}>
+        <div>
+          <b>两种结算方式的区别</b>
+          <b style={{ display: "inline" }}>差价法</b>：客户合同额 − 中标公司开票额 = 过单费，差额天然留存，我方无需另行付款；
+          <b style={{ display: "inline" }}>现金方式</b>：按客户合同额 100% 开票，过单费按费率单独现金支付，
+          <b style={{ display: "inline", color: "var(--bad)" }}>收款方为个人且不开票，凭证三件套是唯一凭据</b>。
+        </div>
+      </div>
+
+      <div className="card" style={{ marginTop: 14 }}>
+        <div className="card-h">
+          <h3>过单费台账</h3>
+          <span style={{ fontSize: 12, color: "var(--muted)" }}>代中标 {agents.length} 笔</span>
+        </div>
+        <div style={{ overflowX: "auto" }}>
+          <table className="tbl">
+            <thead>
+              <tr>
+                <th>编号</th><th>项目 / 对方</th><th>结算方式</th><th>客户合同额</th>
+                <th>开票额</th><th>过单费</th><th>已付</th><th>未付</th><th>状态</th><th></th>
+              </tr>
+            </thead>
+            <tbody>
+              {agents.map((a) => (
+                <tr key={a.id} style={(a.unpaid_cents ?? 0) > 0 ? { background: "var(--bad-weak)" } : undefined}>
+                  <td className="num">{a.code}</td>
+                  <td style={{ whiteSpace: "normal", minWidth: 200 }}>
+                    <b>{a.project_name ?? "—"}</b>
+                    <div style={{ fontSize: 11.5, color: "var(--muted)" }}>
+                      {a.agreement_with}
+                      {a.party_type === "individual" && (
+                        <span style={{ color: "var(--warn)", marginLeft: 5 }}>· 个人</span>
+                      )}
+                    </div>
+                  </td>
+                  <td><Badge tone={a.fee_method === "diff" ? "pri" : "vio"}>
+                    {a.fee_method === "diff" ? "差价法" : "现金+全额发票"}
+                  </Badge></td>
+                  <td className="num">{fenToWan(a.customer_amount_cents)} 万</td>
+                  <td className="num">{fenToWan(a.invoiced_amount_cents)} 万</td>
+                  <td className="num" style={{ color: "var(--pri)" }}>{fenToWan(a.fee_cents)} 万</td>
+                  <td className="num money-in">{fenToWan(a.paid_cents ?? 0)} 万</td>
+                  <td className="num" style={(a.unpaid_cents ?? 0) > 0 ? { color: "var(--bad)" } : undefined}>
+                    {fenToWan(a.unpaid_cents ?? 0)} 万
+                  </td>
+                  <td><Badge tone={a.status === "已结清" ? "ok" : "warn"}>{a.status}</Badge></td>
+                  <td>
+                    {a.project_id && (
+                      <Link href={`/projects/${a.project_id}`} className="btn btn-sm">详情</Link>
+                    )}
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <div style={{ display: "grid", gap: 14, gridTemplateColumns: "1fr 1fr", marginTop: 14 }}
+           className="max-lg:!grid-cols-1">
+        <div className="card">
+          <div className="card-h"><h3>差价法核算</h3><span style={{ fontSize: 12, color: "var(--muted)" }}>差额天然留存</span></div>
+          <div style={{ padding: 16 }}>
+            <div className="calc">
+              <div className="row"><span>客户合同额</span><b>486.00 万</b></div>
+              <div className="row"><span>− 中标公司开票额</span><b>435.00 万</b></div>
+              <div style={{ height: 1, background: "var(--line)", margin: "8px 0" }} />
+              <div className="row"><span><b>过单费（差额留存）</b></span>
+                <b style={{ color: "var(--pri)", fontSize: 15 }}>51.00 万</b></div>
+            </div>
+            <div className="notice ok" style={{ marginTop: 12 }}>
+              <div><b>特点</b>无需单独付款动作，差额自动留存；但要求开票金额与实际成本匹配，
+                差额过大可能引发税务关注，需在代中标协议中明确服务内容。</div>
+            </div>
+          </div>
+        </div>
+
+        <div className="card">
+          <div className="card-h"><h3>现金方式核算</h3><span style={{ fontSize: 12, color: "var(--muted)" }}>
+            个人收款 · 不开票</span></div>
+          <div style={{ padding: 16 }}>
+            <div className="calc">
+              <div className="row"><span>客户合同额（100% 开票）</span><b>268.00 万</b></div>
+              <div className="row"><span>× 过单费率</span><b>6.00%</b></div>
+              <div style={{ height: 1, background: "var(--line)", margin: "8px 0" }} />
+              <div className="row"><span><b>过单费（应付）</b></span>
+                <b style={{ color: "var(--pri)", fontSize: 15 }}>16.08 万</b></div>
+              <div className="row"><span>已付 / 未付</span>
+                <b>9.65 / <span className="money-out">6.43</span> 万</b></div>
+            </div>
+            <div className="notice danger" style={{ marginTop: 12 }}>
+              <div><b>凭证要求</b>个人收款且对方不开票，付款凭证是唯一凭据。必须三件套齐备：
+                代中标协议、付款凭证（银行回单/现金签收单）、收款确认单。系统登记付款时强制校验。</div>
+            </div>
+            {individual.length > 0 && (
+              <div style={{ marginTop: 12, fontSize: 12.5, color: "var(--sub)" }}>
+                当前有 <b>{individual.length}</b> 笔个人收款的代中标协议
+              </div>
+            )}
+          </div>
+        </div>
+      </div>
+    </>
+  );
+}

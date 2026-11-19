@@ -1,0 +1,14 @@
+node_modules
+.next
+db/app.db
+db/app.db-wal
+db/app.db-shm
+db/*.db
+uploads
+.git
+.env.local
+*.log
+启动.bat
+tools/__pycache__
+__pycache__
+_*.py

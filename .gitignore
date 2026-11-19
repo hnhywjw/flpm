@@ -1,0 +1,18 @@
+node_modules/
+.next/
+out/
+*.log
+db/app.db
+db/app.db-wal
+db/app.db-shm
+uploads/
+.env
+.env.local
+.env.*.local
+# 密钥文件绝不入库（JOB_TOKEN / CAPTCHA_SECRET 等）
+.env.projectflow
+# 同步脚本含服务器口令，绝不入库
+syncer.py
+_*.py
+.DS_Store
+next-env.d.ts

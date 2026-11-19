@@ -1,0 +1,38 @@
+/** @type {import('tailwindcss').Config} */
+module.exports = {
+  content: ["./app/**/*.{js,ts,jsx,tsx}", "./components/**/*.{js,ts,jsx,tsx}"],
+  theme: {
+    extend: {
+      colors: {
+        pri: "var(--pri)",
+        "pri-2": "var(--pri-2)",
+        "pri-weak": "var(--pri-weak)",
+        "pri-soft": "var(--pri-soft)",
+        ok: "var(--ok)",
+        "ok-weak": "var(--ok-weak)",
+        warn: "var(--warn)",
+        "warn-weak": "var(--warn-weak)",
+        bad: "var(--bad)",
+        "bad-weak": "var(--bad-weak)",
+        info: "var(--info)",
+        "info-weak": "var(--info-weak)",
+        vio: "var(--violet)",
+        "vio-weak": "var(--violet-weak)",
+        page: "var(--bg)",
+        card: "var(--card)",
+        line: "var(--line)",
+        "line-2": "var(--line2)",
+        ink: "var(--text)",
+        sub: "var(--sub)",
+        muted: "var(--muted)",
+        side: "var(--side-bg)",
+        "side-title": "var(--side-title)",
+        "side-text": "var(--side-text)",
+        "side-hover": "var(--side-hover)",
+        "side-line": "var(--side-line)",
+      },
+      borderRadius: { DEFAULT: "12px" },
+    },
+  },
+  plugins: [],
+};
